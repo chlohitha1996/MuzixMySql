@@ -38,7 +38,7 @@ public class TrackController {
         List<Track> track1=trackService.getAllTracks();
         return new ResponseEntity<List<Track>>(track1,HttpStatus.OK);
     }
-    @RequestMapping(value="track",method=RequestMethod.PUT)
+    @RequestMapping(value="track/{id}",method=RequestMethod.PUT)
     public ResponseEntity<Track> updateTrack(@RequestBody Track track)
     {
         ResponseEntity responseEntity;
@@ -54,7 +54,7 @@ public class TrackController {
         return responseEntity;
     }
 
-    @DeleteMapping(value = "deltrack")
+    @DeleteMapping("track/{id}")
     public ResponseEntity<String> deleteTrack(@RequestBody Track track)
     {
         ResponseEntity responseEntity;
@@ -77,13 +77,6 @@ public class TrackController {
         List<Track> track1=trackService.getAllTracksByNameById(trackName,trackId);
         return new ResponseEntity<List<Track>>(track1, HttpStatus.OK);
     }
-
-   /*@GetMapping("track/{trackName}")
-   public ResponseEntity<?> getTrackByNames(@PathVariable String trackName){
-       Track trackList= (Track) trackService.getAllTrackByName(trackName);
-       return new ResponseEntity<Track>(trackList,HttpStatus.OK);
-   }*/
-
 
 
 

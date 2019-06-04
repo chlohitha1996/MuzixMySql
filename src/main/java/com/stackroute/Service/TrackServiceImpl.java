@@ -6,6 +6,10 @@ import com.stackroute.Exceptions.TrackAlreadyExistsException;
 import com.stackroute.Exceptions.TrackNotFoundException;
 import com.stackroute.Repository.TrackRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -14,8 +18,16 @@ import java.util.List;
 
 @Service
 @Primary
+@EnableCaching
 public class TrackServiceImpl implements TrackService {
     TrackRepository trackRepository;
+    public void simulatedDelay(){
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
 @Autowired
     public TrackServiceImpl(TrackRepository trackRepository){
@@ -23,7 +35,7 @@ public class TrackServiceImpl implements TrackService {
     }
 
 
-
+    @CacheEvict("track")
     @Override
     public Track savingTrack(Track track) throws TrackAlreadyExistsException {
         Track saveTrack = null;
@@ -39,7 +51,7 @@ public class TrackServiceImpl implements TrackService {
     }
 
 
-
+    @Cacheable("track")
     @Override
     public List<Track> getAllTracksByNameById(String trackName, int trackId) throws ResponseStatusException {
         if (trackRepository.existsById(trackId)) {
@@ -49,7 +61,7 @@ public class TrackServiceImpl implements TrackService {
     }
 
 
-
+    @CacheEvict("track")
     @Override
     public String deleteTrack(Track track) throws TrackNotFoundException {
 
@@ -74,11 +86,13 @@ public class TrackServiceImpl implements TrackService {
         }
     }
 
+
+    @CacheEvict("track")
     @Override
     public List<Track> getAllTracks() {
         return trackRepository.findAll();
     }
-
+    @CachePut("track")
     @Override
     public Track updateComment(Track track)  {
         if (trackRepository.existsById(track.getTrackId())) {
